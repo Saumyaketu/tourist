@@ -1,0 +1,28 @@
+.app-root { display: flex; flex-direction: column; height: 100vh; }
+.navbar {
+  height: 64px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px; background: #fff; border-bottom: 1px solid #eef2f7;
+}
+.navbar .logo { font-weight: 700; color: #0a84ff; margin-right: 18px; }
+.navbar nav .nav-link { margin-right: 12px; text-decoration: none; color: #374151; }
+.navbar nav .nav-link.active { color: #0a84ff; font-weight: 600; }
+.navbar-right { display:flex; gap: 8px; align-items:center; }
+
+.app-body { display: flex; flex: 1; }
+.sidebar { width: 200px; background: #fff; border-right: 1px solid #eef2f7; padding: 12px; }
+.sidebar ul { list-style: none; padding: 0; margin: 0; }
+.side-link { display:block; padding: 8px 10px; text-decoration: none; color: #374151; border-radius: 6px; margin-bottom: 6px; }
+.side-link.active { background: #f1f5f9; color: #0a84ff; font-weight: 600; }
+
+.app-main { flex: 1; padding: 18px; overflow: auto; }
+
+.card { background:#fff; padding:14px; border-radius:10px; box-shadow: 0 4px 10px rgba(16,24,40,0.03); margin-bottom: 12px; }
+.row { display:flex; gap: 16px; }
+.col-8 { flex: 2; }
+.col-4 { flex: 1; }
+
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th, .data-table td { border: 1px solid #eef2f7; padding: 8px; text-align: left; }
+.btn { background: #0a84ff; color: #fff; padding: 8px 10px; border-radius: 6px; border: none; }
+.btn.small { padding: 6px 8px; font-size: 13px; }
+.table-scroll { max-height: 300px; overflow: auto; }
