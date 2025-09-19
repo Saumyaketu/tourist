@@ -8,6 +8,7 @@ node_modules/
 .expo
 .vscode/
 
+.env
 dist/
 web-build/
 expo-env.d.ts

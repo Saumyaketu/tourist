@@ -1,0 +1,8 @@
+{
+  "name": "anomaly-service",
+  "version": "1.0.0",
+  "main": "consumer.js",
+  "dependencies": {
+    "node-fetch": "^2.6.12"
+  }
+}
