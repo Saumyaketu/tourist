@@ -30,5 +30,5 @@ app.get('/v1/verify', (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 4400;
+const PORT = process.env.PORT || 4300;
 app.listen(PORT, () => console.log(`Auth service listening on ${PORT}`));

@@ -1,6 +1,9 @@
 import axios from "axios";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4300";
+// Change this line to point to the dashboard-api service on port 4200
+// const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4200";
+
+const API_BASE = "/";
 
 const api = axios.create({
   baseURL: API_BASE,

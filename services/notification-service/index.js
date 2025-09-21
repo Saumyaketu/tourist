@@ -22,5 +22,5 @@ app.post('/v1/notify', async (req, res) => {
   res.json({ status: 'sent', channel, to });
 });
 
-const PORT = process.env.PORT || 4200;
+const PORT = process.env.PORT || 4500;
 app.listen(PORT, () => console.log(`Notification service listening on ${PORT}`));

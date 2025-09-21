@@ -1,7 +1,8 @@
 import axios from "axios";
 
 // This should be your backend server address
-const API_BASE = import.meta.env.MOBILE_API_BASE;
+// const API_BASE = import.meta.env.MOBILE_API_BASE;
+const API_BASE="http://192.168.137.1:4000";
 
 const api = axios.create({
   baseURL: API_BASE,
