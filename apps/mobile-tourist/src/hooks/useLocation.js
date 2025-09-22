@@ -1,18 +1,32 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import { LOCATION_TASK_NAME } from "../background-task";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const LAST_LOCATION_KEY = 'last_location';
 
 export default function useLocationBackground() {
   const subRef = useRef(null);
+  const [lastKnownLocation, setLastKnownLocation] = useState(null);
 
   useEffect(() => {
-    // cleanup on unmount
+    async function loadLastLocation() {
+      try {
+        const storedLocation = await AsyncStorage.getItem(LAST_LOCATION_KEY);
+        if (storedLocation) {
+          setLastKnownLocation(JSON.parse(storedLocation));
+        }
+      } catch (e) {
+        console.error("Failed to load last known location:", e);
+      }
+    }
+    loadLastLocation();
+
     return () => {
       if (subRef.current) {
         subRef.current.remove();
       }
-      // do not stop background tasks here
     };
   }, []);
 
@@ -54,5 +68,5 @@ export default function useLocationBackground() {
     await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
   }
 
-  return { startForegroundWatch, stopForegroundWatch, startBackground, stopBackground };
+  return { startForegroundWatch, stopForegroundWatch, startBackground, stopBackground, lastKnownLocation };
 }

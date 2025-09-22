@@ -3,9 +3,11 @@ import { View, Text, StyleSheet, Alert, Platform } from "react-native";
 import PanicButton from "../components/PanicButton";
 import { sendPanic } from "../api/client";
 import * as Location from "expo-location";
+import useLocationBackground from "../hooks/useLocation";
 
 export default function PanicScreen() {
   const [sending, setSending] = useState(false);
+  const { lastKnownLocation } = useLocationBackground();
 
   const onPanic = async () => {
     setSending(true);
@@ -31,6 +33,10 @@ export default function PanicScreen() {
         currentLocation = await Promise.race([locationPromise, timeoutPromise]);
       } catch (e) {
         console.warn("Location fetch timed out or failed:", e.message);
+        currentLocation = lastKnownLocation;
+        if (currentLocation) {
+          console.log("Using last known location as fallback.");
+        }
       }
 
       if (!currentLocation || !currentLocation.coords) {

@@ -47,7 +47,14 @@ app.post('/v1/location', async (req, res) => {
 });
 
 app.post('/v1/panic', async (req, res) => {
-  const { deviceId, lat, lon, timestamp, touristRef } = req.body;
+  const { deviceId, location, timestamp, touristRef } = req.body;
+  let lat = undefined;
+  let lon = undefined;
+  if (location && typeof location === 'object') {
+      lat = location.lat;
+      lon = location.lon;
+  }
+
   const alert = { id: 'P-' + Date.now(), type: 'PANIC', severity: 'CRITICAL', location: { lat, lon }, deviceId, touristRef, timestamp: timestamp || new Date().toISOString(), acknowledged: false };
   try {
     await alertsCollection.insertOne(alert);
