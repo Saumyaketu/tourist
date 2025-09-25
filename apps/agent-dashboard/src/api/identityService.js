@@ -4,7 +4,7 @@
  * A centralized API client for all interactions with the backend identity service.
  */
 
-const API_BASE_URL = 'http://localhost:4100/v1';
+const API_BASE_URL = '/v1';
 
 /*
  * Registers a new tourist with the identity service.
