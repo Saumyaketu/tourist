@@ -1,0 +1,120 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Identity Service API",
+    "version": "1.0.0",
+    "description": "OpenAPI documentation for the Identity Service (tourist DID/VC issuance POC)."
+  },
+  "servers": [
+    { "url": "http://localhost:4100", "description": "Local dev server" }
+  ],
+  "paths": {
+    "/v1/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        }
+      }
+    },
+    "/v1/tourists": {
+      "post": {
+        "summary": "Register a tourist",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "full_name": { "type": "string", "description": "Tourist's full name (required)." },
+                  "primary_phone": { "type": "string", "description": "Tourist's primary phone in E.164 format (required)." },
+                  "primary_email": { "type": "string", "format": "email", "description": "Tourist's primary email." },
+                  "country_of_origin": { "type": "string", "description": "Tourist's country of origin (e.g., ISO 3166-1 alpha-2 code)." },
+                  "arrival_date": { "type": "string", "format": "date", "description": "Planned arrival date." },
+                  "expected_departure_date": { "type": "string", "format": "date", "description": "Planned departure date." },
+                  "current_accommodation": { 
+                    "type": "object",
+                    "properties": {
+                        "name": { "type": "string" },
+                        "address": { "type": "string" }
+                    },
+                    "description": "Current accommodation details."
+                  },
+                  "party_size": { "type": "integer", "format": "int32", "description": "Total number of people in the party." },
+                  "travel_companions": { "type": "array", "items": { "type": "string" }, "description": "Comma-separated list of companion names." },
+                  "language_preference": { "type": "array", "items": { "type": "string" }, "description": "Preferred languages for communication." },
+                  "itinerary": { "type": "array", "items": { "type": "string" }, "description": "List of planned cities or places to visit." },
+                  "preferred_contact_method": { "type": "string", "description": "Preferred contact method (sms/call/whatsapp)." },
+                  "allergies_medical_conditions": { "type": "string", "description": "Relevant medical or allergy information." },
+                  "insurance_policy": { "type": "string", "description": "Insurance provider and policy number." },
+                  "wearable_id": { "type": "string", "description": "ID of any linked wearable device." },
+                  "photo": { "type": "string", "format": "url", "description": "URL of the tourist's photograph." },
+                  "notes": { "type": "string", "description": "Private notes from the registering agent." },
+                  "emergency_contact": { 
+                    "type": "object",
+                    "properties": {
+                        "name": { "type": "string" },
+                        "phone": { "type": "string", "description": "E.164 format." },
+                        "relation": { "type": "string" }
+                    },
+                    "description": "Emergency contact details."
+                  },
+                  "consent_flags": { 
+                    "type": "object",
+                    "properties": {
+                        "consent_required": { "type": "boolean" },
+                        "tracking_opt_in": { "type": "boolean" },
+                        "share_with_police": { "type": "boolean" }
+                    },
+                    "required": ["consent_required"],
+                    "description": "Privacy and tracking consent flags."
+                  }
+                },
+                "required": ["full_name", "primary_phone"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created", "content": { "application/json": { "schema": { "type": "object" } } } },
+          "400": { "description": "Bad Request" }
+        }
+      },
+      "get": {
+        "summary": "List tourists",
+        "responses": {
+          "200": { "description": "List", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/v1/tourists/{id}": {
+      "get": {
+        "summary": "Get tourist by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "404": { "description": "Not found" }
+        }
+      }
+    },
+    "/v1/tourists/{id}/issue": {
+      "post": {
+        "summary": "Issue DID/credential for tourist",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Issued", "content": { "application/json": { "schema": { "type": "object" } } } },
+          "404": { "description": "Not found" }
+        }
+      }
+    }
+  },
+  "components": {}
+}

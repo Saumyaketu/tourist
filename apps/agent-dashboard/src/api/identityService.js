@@ -1,51 +1,57 @@
 // src/api/identityService.js
 
-/*
- * A centralized API client for all interactions with the backend identity service.
- */
+const BASE = import.meta.env.VITE_IDENTITY_SERVICE_URL || 'http://localhost:4100/v1';
 
-const API_BASE_URL = '/v1';
-
-/*
- * Registers a new tourist with the identity service.
- * @param {object} touristData - The data for the new tourist.
- * @returns {Promise<object>} The response data from the API.
- */
-export const registerTourist = async (touristData) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(touristData),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error registering tourist:', error);
-    throw error;
+async function parseBody(res) {
+  const contentType = res.headers.get('content-type') || '';
+  const isJson = contentType.includes('application/json');
+  const text = await res.text();
+  if (isJson) {
+    try { return JSON.parse(text); } catch (e) { return text; }
   }
-};
+  return text;
+}
 
-/*
- * Fetches a list of all registered tourists from the identity service.
- * @returns {Promise<Array<object>>} A list of tourist data.
- */
-export const fetchTourists = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/tourists`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data.items;
-  } catch (error) {
-    console.error('Error fetching tourists:', error);
-    throw error;
+async function handleRes(res) {
+  if (res.ok) {
+    return parseBody(res);
   }
-};
+  // Not ok — parse body if possible and throw an Error with details
+  const body = await parseBody(res).catch(()=>null);
+  const msg = body && body.errors ? JSON.stringify(body.errors) : (body && body.message) ? body.message : `HTTP ${res.status} ${res.statusText}`;
+  const err = new Error(msg);
+  err.status = res.status;
+  err.body = body;
+  throw err;
+}
+
+export async function listTourists() {
+  const res = await fetch(`${BASE}/tourists`);
+  try { return await handleRes(res); }
+  catch (e) { console.error('listTourists error', e); throw e; }
+}
+
+export async function getTourist(id) {
+  if (!id) throw new Error('getTourist requires id');
+  const res = await fetch(`${BASE}/tourists/${encodeURIComponent(id)}`);
+  try { return await handleRes(res); }
+  catch (e) { console.error('getTourist error', e); throw e; }
+}
+
+export async function createTourist(payload) {
+  console.log('createTourist ->', payload, 'POST', `${BASE}/tourists`);
+  const res = await fetch(`${BASE}/tourists`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  try { return await handleRes(res); }
+  catch (e) { console.error('createTourist error ->', e); throw e; }
+}
+
+export async function issueCredential(id) {
+  if (!id) throw new Error('issueCredential requires id');
+  const res = await fetch(`${BASE}/tourists/${encodeURIComponent(id)}/issue`, { method: 'POST' });
+  try { return await handleRes(res); }
+  catch (e) { console.error('issueCredential error', e); throw e; }
+}
