@@ -12,30 +12,23 @@ app.use(bodyParser.json());
 let touristsCollection, alertsCollection, locationsCollection;
 
 async function connectToMongo() {
-  const uri = process.env.MONGO_URI;
-  const dbName = process.env.MONGO_DB;
-
-  if (!uri) {
-    console.error("MONGO_URI environment variable is not set.");
-    process.exit(1);
-  }
-  if (!dbName) { 
-    console.error("MONGO_DB environment variable is not set.");
-    process.exit(1);
-  }
-  
-  const client = new MongoClient(uri);
-  try {
-    await client.connect();
-    const db = client.db(dbName); 
-    touristsCollection = db.collection('tourists');
-    alertsCollection = db.collection('alerts');
-    locationsCollection = db.collection('locations');
-    console.log(`Dashboard API connected to MongoDB database: ${dbName}`);
-  } catch (e) {
-    console.error("Failed to connect to MongoDB", e);
-    process.exit(1);
-  }
+  const uri = process.env.MONGO_URI;
+  if (!uri) {
+    console.error("MONGO_URI environment variable is not set.");
+    process.exit(1);
+  }
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    const db = client.db('tourist_safety');
+    touristsCollection = db.collection('tourists');
+    alertsCollection = db.collection('alerts');
+    locationsCollection = db.collection('locations');
+    console.log("Dashboard API connected to MongoDB Atlas");
+  } catch (e) {
+    console.error("Failed to connect to MongoDB", e);
+    process.exit(1);
+  }
 }
 
 connectToMongo();
