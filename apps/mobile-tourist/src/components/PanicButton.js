@@ -1,22 +1,37 @@
-import React from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+// apps/mobile-tourist/src/components/PanicButton.js
+import React, { useState } from 'react';
+import { Button, Alert } from 'react-native';
+// Remove ALL location/API/AsyncStorage imports
+import { executePanicFlow } from '../screens/PanicScreen'; // Import the consolidated logic
 
-export default function PanicButton({ onPress, disabled }) {
+export default function PanicButton({ touristId }) {
+  const [sending, setSending] = useState(false);
+
+  async function onPanic() {
+    if (!touristId) {
+        Alert.alert('Error', 'Tourist ID not available. Please try logging in again.');
+        return;
+    }
+    
+    try {
+      setSending(true);
+      // Execute the entire flow contained within PanicScreen.js
+      await executePanicFlow(touristId);
+      
+    } catch (err) {
+      // Catch any errors thrown during the flow (like token missing or API failure)
+      Alert.alert('Panic failed', err.message || String(err) + '. Check backend status.');
+    } finally {
+      setSending(false);
+    }
+  }
+
   return (
-    <TouchableOpacity style={[styles.button, disabled && styles.disabled]} onPress={onPress} disabled={disabled}>
-      <Text style={styles.text}>🚨 PANIC</Text>
-    </TouchableOpacity>
+    <Button
+      title={sending ? 'Sending Alert...' : 'PANIC — Send alert'}
+      color="red"
+      onPress={onPanic}
+      disabled={sending}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: "#d9534f",
-    paddingHorizontal: 36,
-    paddingVertical: 16,
-    borderRadius: 12,
-    elevation: 3,
-  },
-  disabled: { opacity: 0.6 },
-  text: { color: "#fff", fontWeight: "700", fontSize: 16 },
-});
